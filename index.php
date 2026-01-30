@@ -1,3 +1,9 @@
 <?php
-header("Location: film/index.php");
+session_start();
+
+if (!isset($_SESSION['staff_id'])) {
+    header("Location: auth/login.php");
+} else {
+    header("Location: film/index.php");
+}
 exit;

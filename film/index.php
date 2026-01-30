@@ -1,4 +1,6 @@
 <?php
+
+require "../auth/auth.php";
 require "../config/db.php";
 
 $stmt = $pdo->query("SELECT film_id, title, release_year, rental_rate FROM film LIMIT 50");

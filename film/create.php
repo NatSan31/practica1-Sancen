@@ -1,4 +1,5 @@
 <?php
+require "../auth/auth.php";
 require "../config/db.php";
 
 if ($_POST) {
