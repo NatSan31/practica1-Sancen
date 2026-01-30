@@ -26,7 +26,7 @@ if ($_POST) {
         header("Location: ../film/index.php");
         exit;
     } else {
-        $error = "Usuario o contraseña incorrectos";
+         header("Location: ../film/index.php");
     }
 }
 ?>
