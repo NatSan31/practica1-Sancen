@@ -3,32 +3,64 @@
 require "../auth/auth.php";
 require "../config/db.php";
 
-$stmt = $pdo->query("SELECT film_id, title, release_year, rental_rate FROM film LIMIT 50");
-$films = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Habilitar errores para depuración
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+// Incluir la conexión
+require "../config/db.php";
+
+try {
+    // Consultamos las últimas 20 películas agregadas
+    $sql = "SELECT film_id, title, rental_rate, last_update FROM film ORDER BY film_id DESC LIMIT 20";
+    $stmt = $pdo->query($sql);
+    $peliculas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error al consultar películas: " . $e->getMessage());
+}
 ?>
 
-<h1>Películas (Sakila)</h1>
-<a href="create.php">➕ Nueva película</a>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Películas - Sakila</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f4f4f4; }
+        .btn { padding: 10px 15px; background: #28a745; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
 
-<table border="1" cellpadding="5">
-    <tr>
-        <th>ID</th>
-        <th>Título</th>
-        <th>Año</th>
-        <th>Precio</th>
-        <th>Acciones</th>
-    </tr>
+    <h1>Películas en Sakila</h1>
+    
+    <div style="margin-bottom: 20px;">
+        <a href="new.php" class="btn">+ Agregar Nueva Película</a>
+    </div>
 
-    <?php foreach ($films as $film): ?>
-    <tr>
-        <td><?= $film['film_id'] ?></td>
-        <td><?= $film['title'] ?></td>
-        <td><?= $film['release_year'] ?></td>
-        <td><?= $film['rental_rate'] ?></td>
-        <td>
-            <a href="edit.php?id=<?= $film['film_id'] ?>">✏️</a>
-            <a href="delete.php?id=<?= $film['film_id'] ?>" onclick="return confirm('¿Seguro?')">🗑️</a>
-        </td>
-    </tr>
-    <?php endforeach; ?>
-</table>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Tarifa de Renta</th>
+                <th>Última Actualización</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($peliculas as $p): ?>
+            <tr>
+                <td><?php echo $p['film_id']; ?></td>
+                <td><?php echo htmlspecialchars($p['title']); ?></td>
+                <td>$<?php echo $p['rental_rate']; ?></td>
+                <td><?php echo $p['last_update']; ?></td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+
+</body>
+</html>
